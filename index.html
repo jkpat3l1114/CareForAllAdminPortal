@@ -209,10 +209,35 @@ select.fl{height:38px;border:1px solid var(--border);border-radius:9px;padding:0
 .userchip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:30px;padding:5px 16px 5px 6px;box-shadow:0 1px 3px rgba(16,34,63,.05)}
 .userchip .ini{width:32px;height:32px;border-radius:50%;background:var(--coral);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px}
 
+/* Login gate */
+#gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1f3160 0%,#15223f 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{background:#fff;border-radius:20px;padding:34px 32px;width:380px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.gate-logo{font-family:var(--num);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);font-size:22px;display:flex;align-items:center;justify-content:center;gap:9px}
+.gate-logo .dot{width:12px;height:12px;border-radius:50%;background:var(--coral)}
+.gate-sub{font-family:var(--num);font-weight:600;color:var(--text);font-size:14px;margin-top:4px}
+.gate-hint{color:var(--muted);font-size:13px;margin:14px 0 16px}
+#gate input[type=password]{width:100%;border:1px solid var(--border);border-radius:11px;padding:12px 14px;font-family:'Manrope';font-size:14px;outline:none}
+#gate input[type=password]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,107,237,.15)}
+#gateBtn{width:100%;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:11px;padding:12px;font-family:'Manrope';font-weight:700;font-size:14px;cursor:pointer}
+#gateBtn:hover{background:var(--blue2)}
+.gate-err{color:var(--red);font-size:12.5px;font-weight:600;margin-top:10px;min-height:16px}
+.gate-remember{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-size:12px;margin-top:12px;cursor:pointer}
+
 @media(max-width:560px){.sidebar{display:none}.main{padding:18px}.topbar{padding:0 16px}.role-pick .rlbl{display:none}}
 </style>
 </head>
 <body>
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo"><span class="dot"></span>CareForAll</div>
+    <div class="gate-sub">Admin Backend Portal</div>
+    <p class="gate-hint">Enter the access password to continue.</p>
+    <input id="gatePw" type="password" placeholder="Access password" autocomplete="current-password" />
+    <button id="gateBtn">Unlock</button>
+    <div class="gate-err" id="gateErr"></div>
+    <label class="gate-remember"><input type="checkbox" id="gateRemember" checked /> Remember me on this device</label>
+  </div>
+</div>
 <div class="app">
   <aside class="sidebar">
     <div class="wordmark"><span class="dot"></span>CareForAll</div>
@@ -233,6 +258,20 @@ select.fl{height:38px;border:1px solid var(--border);border-radius:9px;padding:0
 <div class="drawer" id="drawer"></div>
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="box" id="modalBox"></div></div>
 <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toastMsg"></span></div>
+
+<script>
+/* Lightweight client-side access gate. Note: a static page cannot enforce real
+   security — this only deters casual access. The password is stored as a SHA-256
+   hash so the literal text is not in the source. */
+(function(){
+  var HASH="954fbae8f2ac8fb41d9e9d3c38cbbd6688b02ba6e44d6c8688f8c20f9632d948", KEY="cfa_gate_ok";
+  var sha256=function(ascii){function rr(v,a){return (v>>>a)|(v<<(32-a));}var mp=Math.pow,maxWord=mp(2,32),result="";var words=[],bitLen=ascii.length*8;var hash=sha256.h=sha256.h||[],k=sha256.k=sha256.k||[],pc=k.length;var comp={};for(var cand=2;pc<64;cand++){if(!comp[cand]){for(var i=0;i<313;i+=cand){comp[i]=cand;}hash[pc]=(mp(cand,0.5)*maxWord)|0;k[pc++]=(mp(cand,1/3)*maxWord)|0;}}ascii+="\x80";while(ascii.length%64-56)ascii+="\x00";for(var i=0;i<ascii.length;i++){var j=ascii.charCodeAt(i);if(j>>8)return;words[i>>2]|=j<<((3-i)%4)*8;}words[words.length]=(bitLen/maxWord)|0;words[words.length]=bitLen;for(var jj=0;jj<words.length;){var w=words.slice(jj,jj+=16),oh=hash;hash=hash.slice(0,8);for(var i=0;i<64;i++){var w15=w[i-15],w2=w[i-2],a=hash[0],e=hash[4];var t1=hash[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&hash[5])^((~e)&hash[6]))+k[i]+(w[i]=(i<16)?w[i]:(w[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+w[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));hash=[(t1+t2)|0].concat(hash);hash[4]=(hash[4]+t1)|0;}for(var i=0;i<8;i++){hash[i]=(hash[i]+oh[i])|0;}}for(var i=0;i<8;i++){for(var j=3;j+1;j--){var b=(hash[i]>>(j*8))&255;result+=((b<16)?0:"")+b.toString(16);}}return result;};
+  function unlock(){var g=document.getElementById("gate");if(g)g.parentNode.removeChild(g);}
+  function attempt(){var pw=document.getElementById("gatePw").value;if(sha256(pw)===HASH){try{if(document.getElementById("gateRemember").checked)localStorage.setItem(KEY,HASH);}catch(e){}unlock();}else{document.getElementById("gateErr").textContent="Incorrect password — try again.";var p=document.getElementById("gatePw");p.value="";p.focus();}}
+  function init(){try{if(localStorage.getItem(KEY)===HASH){unlock();return;}}catch(e){}var b=document.getElementById("gateBtn"),p=document.getElementById("gatePw");if(b)b.addEventListener("click",attempt);if(p){p.addEventListener("keydown",function(e){if(e.key==="Enter")attempt();});p.focus();}}
+  if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.30.0/iconfont/tabler-icons.min.css"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.30.0/iconfont/tabler-icons.min.css" rel="stylesheet">

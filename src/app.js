@@ -1,3 +1,19 @@
+/* Lightweight client-side access gate. Note: a static page cannot enforce real
+   security — this only deters casual access. The password is stored as a SHA-256
+   hash so the literal text is not in the source. */
+(function(){
+  var HASH="954fbae8f2ac8fb41d9e9d3c38cbbd6688b02ba6e44d6c8688f8c20f9632d948", KEY="cfa_gate_ok";
+  var sha256=function(ascii){function rr(v,a){return (v>>>a)|(v<<(32-a));}var mp=Math.pow,maxWord=mp(2,32),result="";var words=[],bitLen=ascii.length*8;var hash=sha256.h=sha256.h||[],k=sha256.k=sha256.k||[],pc=k.length;var comp={};for(var cand=2;pc<64;cand++){if(!comp[cand]){for(var i=0;i<313;i+=cand){comp[i]=cand;}hash[pc]=(mp(cand,0.5)*maxWord)|0;k[pc++]=(mp(cand,1/3)*maxWord)|0;}}ascii+="\x80";while(ascii.length%64-56)ascii+="\x00";for(var i=0;i<ascii.length;i++){var j=ascii.charCodeAt(i);if(j>>8)return;words[i>>2]|=j<<((3-i)%4)*8;}words[words.length]=(bitLen/maxWord)|0;words[words.length]=bitLen;for(var jj=0;jj<words.length;){var w=words.slice(jj,jj+=16),oh=hash;hash=hash.slice(0,8);for(var i=0;i<64;i++){var w15=w[i-15],w2=w[i-2],a=hash[0],e=hash[4];var t1=hash[7]+(rr(e,6)^rr(e,11)^rr(e,25))+((e&hash[5])^((~e)&hash[6]))+k[i]+(w[i]=(i<16)?w[i]:(w[i-16]+(rr(w15,7)^rr(w15,18)^(w15>>>3))+w[i-7]+(rr(w2,17)^rr(w2,19)^(w2>>>10)))|0);var t2=(rr(a,2)^rr(a,13)^rr(a,22))+((a&hash[1])^(a&hash[2])^(hash[1]&hash[2]));hash=[(t1+t2)|0].concat(hash);hash[4]=(hash[4]+t1)|0;}for(var i=0;i<8;i++){hash[i]=(hash[i]+oh[i])|0;}}for(var i=0;i<8;i++){for(var j=3;j+1;j--){var b=(hash[i]>>(j*8))&255;result+=((b<16)?0:"")+b.toString(16);}}return result;};
+  function unlock(){var g=document.getElementById("gate");if(g)g.parentNode.removeChild(g);}
+  function attempt(){var pw=document.getElementById("gatePw").value;if(sha256(pw)===HASH){try{if(document.getElementById("gateRemember").checked)localStorage.setItem(KEY,HASH);}catch(e){}unlock();}else{document.getElementById("gateErr").textContent="Incorrect password — try again.";var p=document.getElementById("gatePw");p.value="";p.focus();}}
+  function init(){try{if(localStorage.getItem(KEY)===HASH){unlock();return;}}catch(e){}var b=document.getElementById("gateBtn"),p=document.getElementById("gatePw");if(b)b.addEventListener("click",attempt);if(p){p.addEventListener("keydown",function(e){if(e.key==="Enter")attempt();});p.focus();}}
+  if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.30.0/iconfont/tabler-icons.min.css"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.30.0/iconfont/tabler-icons.min.css" rel="stylesheet">
+<script>
 /* ----------------------------- MOCK DATA ----------------------------- */
 const CHAPTERS = [
   {id:'va-fairfax', name:'VA-Fairfax Chapter', location:'Fairfax, VA', type:'School Chapter', lead:'Alex Chen', leadEmail:'alex.chen@school.edu', founded:'Sep 2024', visibility:'Public', members:24, hours:412, completed:3, active:2, mapped:1840, status:'Active', lastCheckIn:'Apr 15, 2026'},

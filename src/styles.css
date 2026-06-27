@@ -199,4 +199,18 @@ select.fl{height:38px;border:1px solid var(--border);border-radius:9px;padding:0
 .userchip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:30px;padding:5px 16px 5px 6px;box-shadow:0 1px 3px rgba(16,34,63,.05)}
 .userchip .ini{width:32px;height:32px;border-radius:50%;background:var(--coral);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px}
 
+/* Login gate */
+#gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1f3160 0%,#15223f 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{background:#fff;border-radius:20px;padding:34px 32px;width:380px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.gate-logo{font-family:var(--num);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);font-size:22px;display:flex;align-items:center;justify-content:center;gap:9px}
+.gate-logo .dot{width:12px;height:12px;border-radius:50%;background:var(--coral)}
+.gate-sub{font-family:var(--num);font-weight:600;color:var(--text);font-size:14px;margin-top:4px}
+.gate-hint{color:var(--muted);font-size:13px;margin:14px 0 16px}
+#gate input[type=password]{width:100%;border:1px solid var(--border);border-radius:11px;padding:12px 14px;font-family:'Manrope';font-size:14px;outline:none}
+#gate input[type=password]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,107,237,.15)}
+#gateBtn{width:100%;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:11px;padding:12px;font-family:'Manrope';font-weight:700;font-size:14px;cursor:pointer}
+#gateBtn:hover{background:var(--blue2)}
+.gate-err{color:var(--red);font-size:12.5px;font-weight:600;margin-top:10px;min-height:16px}
+.gate-remember{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-size:12px;margin-top:12px;cursor:pointer}
+
 @media(max-width:560px){.sidebar{display:none}.main{padding:18px}.topbar{padding:0 16px}.role-pick .rlbl{display:none}}
